@@ -1,888 +1,682 @@
-const KEY = "medceo_v1";
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-const defaults = {
-  tasks: [
-    {
-      id: 1,
-      name: "التدريب الطبي / الجراحي",
-      duration: 90,
-      domain: "🩺 الطب",
-      done: false
-    },
-    {
-      id: 2,
-      name: "English Speaking & Listening",
-      duration: 45,
-      domain: "🗣️ الإنجليزية",
-      done: false
-    },
-    {
-      id: 3,
-      name: "أعلى مهمة أثرًا في الشركة",
-      duration: 60,
-      domain: "🏢 الشركة",
-      done: false
-    }
-  ],
+    <meta name="theme-color" content="#0b1020">
+    <meta name="description" content="MedCEO OS - Personal Operating System">
 
-  domains: {
-    medicine: {
-      name: "الطب والجراحة",
-      icon: "🩺",
-      score: 70
-    },
+    <title>MedCEO OS</title>
 
-    company: {
-      name: "الشركة",
-      icon: "🏢",
-      score: 40
-    },
+    <link rel="stylesheet" href="styles.css">
+</head>
 
-    health: {
-      name: "الصحة",
-      icon: "❤️",
-      score: 75
-    },
+<body>
 
-    english: {
-      name: "الإنجليزية",
-      icon: "🗣️",
-      score: 50
-    },
+<div id="app">
 
-    wealth: {
-      name: "الثروة",
-      icon: "💰",
-      score: 40
-    },
+    <!-- ================= HEADER ================= -->
+    <header class="topbar">
+        <div>
+            <div class="brand">MedCEO <span>OS</span></div>
+            <div class="date" id="currentDate"></div>
+        </div>
 
-    social: {
-      name: "العلاقات",
-      icon: "🤝",
-      score: 65
-    }
-  },
+        <button class="icon-btn" data-page="settings" aria-label="الإعدادات">
+            ⚙️
+        </button>
+    </header>
 
-  goals: [],
 
-  skills: [
-    {
-      name: "القيادة",
-      icon: "♟️",
-      score: 40,
-      text: "اتخاذ القرار وإدارة الفريق"
-    },
-    {
-      name: "الاستراتيجية",
-      icon: "🎯",
-      score: 35,
-      text: "الميزة التنافسية وتخصيص الموارد"
-    },
-    {
-      name: "المالية",
-      icon: "📈",
-      score: 25,
-      text: "P&L والتدفق النقدي والقوائم المالية"
-    },
-    {
-      name: "المبيعات",
-      icon: "🤝",
-      score: 30,
-      text: "فهم العميل وإغلاق الصفقات"
-    },
-    {
-      name: "التفاوض",
-      icon: "⚖️",
-      score: 35,
-      text: "خلق القيمة وإدارة الاتفاقات"
-    },
-    {
-      name: "Data & AI",
-      icon: "✦",
-      score: 40,
-      text: "البيانات والذكاء الاصطناعي للقيادة"
-    }
-  ],
+    <!-- ================= MAIN ================= -->
+    <main id="mainContent">
 
-  reviews: []
-};
+        <!-- ================= DASHBOARD ================= -->
+        <section class="page active" id="page-dashboard">
 
-let data = load();
+            <div class="hero-card glass">
+                <div>
+                    <p class="eyebrow">PERSONAL OPERATING SYSTEM</p>
+                    <h1>صباح القيادة، طبيب 👨‍⚕️</h1>
+                    <p class="muted">
+                        ابنِ يومك اليوم بطريقة تجعل مستقبلك أسهل غداً.
+                    </p>
+                </div>
 
-function load() {
-  try {
-    const value =
-      JSON.parse(localStorage.getItem(KEY));
+                <div class="readiness-ring">
+                    <span id="readinessScore">0</span>
+                    <small>جاهزية</small>
+                </div>
+            </div>
 
-    return value || structuredClone(defaults);
-  } catch {
-    return structuredClone(defaults);
-  }
-}
 
-function save() {
-  localStorage.setItem(
-    KEY,
-    JSON.stringify(data)
-  );
-}
+            <!-- Readiness -->
+            <div class="section-title">
+                <h2>جاهزية اليوم</h2>
+            </div>
 
-function init() {
-  setDate();
-  renderTasks();
-  renderDomains();
-  renderGoals();
-  renderSkills();
-  renderLastReview();
-  updateLifeScore();
-}
+            <div class="grid-3">
 
-function setDate() {
-  const date =
-    new Intl.DateTimeFormat(
-      "ar",
-      {
-        weekday: "long",
-        day: "numeric",
-        month: "long",
-        year: "numeric"
-      }
-    ).format(new Date());
+                <div class="metric-card glass">
+                    <span>😴 النوم</span>
+                    <strong>
+                        <span id="sleepValue">0</span>
+                        ساعة
+                    </strong>
+                </div>
 
-  document.getElementById(
-    "todayDate"
-  ).textContent = date;
-}
+                <div class="metric-card glass">
+                    <span>⚡ الطاقة</span>
+                    <strong>
+                        <span id="energyValue">0</span>/10
+                    </strong>
+                </div>
 
-function navigate(page) {
-  document
-    .querySelectorAll(".page")
-    .forEach(x =>
-      x.classList.remove("active")
-    );
+                <div class="metric-card glass">
+                    <span>🏥 المناوبة</span>
+                    <strong id="shiftStatus">لا توجد</strong>
+                </div>
 
-  document
-    .getElementById("page-" + page)
-    ?.classList.add("active");
+            </div>
 
-  document
-    .querySelectorAll(".bottom-nav button")
-    .forEach(x =>
-      x.classList.remove("nav-active")
-    );
 
-  document
-    .querySelector(
-      `[data-page="${page}"]`
-    )
-    ?.classList.add("nav-active");
+            <!-- Daily tasks -->
+            <div class="section-title">
+                <h2>مهام اليوم</h2>
 
-  window.scrollTo({
-    top: 0,
-    behavior: "smooth"
-  });
-}
+                <button class="text-btn" id="addTaskBtn">
+                    + مهمة
+                </button>
+            </div>
 
-function renderTasks() {
-  const root =
-    document.getElementById("taskList");
+            <div class="progress-container glass">
+                <div class="progress-header">
+                    <span>إنجاز اليوم</span>
+                    <strong id="taskProgressText">0%</strong>
+                </div>
 
-  if (!data.tasks.length) {
-    root.innerHTML =
-      `<p class="muted">
-        لا توجد مهام لليوم.
-      </p>`;
-    return;
-  }
+                <div class="progress">
+                    <div id="taskProgress"></div>
+                </div>
+            </div>
 
-  root.innerHTML =
-    data.tasks
-      .map(
-        task => `
-          <div
-            class="task ${task.done ? "done" : ""}"
-          >
+            <div id="taskList" class="task-list"></div>
+
+
+            <!-- AI -->
+            <div class="section-title">
+                <h2>🧠 المستشار الاستراتيجي</h2>
+            </div>
+
+            <div class="ai-card glass">
+
+                <div class="ai-header">
+                    <div class="ai-avatar">AI</div>
+
+                    <div>
+                        <strong>MedCEO Advisor</strong>
+                        <p class="muted">
+                            يحلل يومك ويقترح الخطوة التالية.
+                        </p>
+                    </div>
+                </div>
+
+                <div id="aiReport" class="ai-report">
+                    لم يتم تحليل اليوم بعد.
+                </div>
+
+                <button id="analyzeBtn" class="primary-btn">
+                    🧠 تحليل يومي بالذكاء الاصطناعي
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= DAILY ================= -->
+        <section class="page" id="page-daily">
+
+            <div class="page-heading">
+                <p class="eyebrow">DAILY CONTROL</p>
+                <h1>اليوم</h1>
+                <p class="muted">
+                    أدخل بياناتك اليومية ثم دع النظام يحسب جاهزيتك.
+                </p>
+            </div>
+
+
+            <div class="form-card glass">
+
+                <label>
+                    ساعات النوم
+                    <input
+                        id="sleepInput"
+                        type="number"
+                        min="0"
+                        max="16"
+                        step="0.5"
+                        placeholder="مثلاً 7"
+                    >
+                </label>
+
+                <label>
+                    مستوى الطاقة
+                    <input
+                        id="energyInput"
+                        type="range"
+                        min="1"
+                        max="10"
+                        value="7"
+                    >
+                    <output id="energyOutput">7</output>/10
+                </label>
+
+                <label>
+                    ساعات المناوبة
+                    <input
+                        id="shiftHoursInput"
+                        type="number"
+                        min="0"
+                        max="24"
+                        step="1"
+                        placeholder="0"
+                    >
+                </label>
+
+                <label class="switch-row">
+                    <span>
+                        🏥 وضع المناوبة
+                        <small>
+                            يخفف الحمل اليومي تلقائياً
+                        </small>
+                    </span>
+
+                    <input
+                        id="onCallInput"
+                        type="checkbox"
+                    >
+                </label>
+
+                <button
+                    id="saveDailyBtn"
+                    class="primary-btn"
+                >
+                    حفظ بيانات اليوم
+                </button>
+
+            </div>
+
+
+            <!-- Worship -->
+            <div class="section-title">
+                <h2>🕌 العبادات</h2>
+            </div>
+
+            <div class="worship-grid glass">
+
+                <label class="check-row">
+                    <input type="checkbox" data-worship="fajr">
+                    الفجر
+                </label>
+
+                <label class="check-row">
+                    <input type="checkbox" data-worship="dhuhr">
+                    الظهر
+                </label>
+
+                <label class="check-row">
+                    <input type="checkbox" data-worship="asr">
+                    العصر
+                </label>
+
+                <label class="check-row">
+                    <input type="checkbox" data-worship="maghrib">
+                    المغرب
+                </label>
+
+                <label class="check-row">
+                    <input type="checkbox" data-worship="isha">
+                    العشاء
+                </label>
+
+                <label class="check-row">
+                    <input type="checkbox" data-worship="quran">
+                    ورد القرآن
+                </label>
+
+                <label class="check-row">
+                    <input type="checkbox" data-worship="sunnah">
+                    النوافل
+                </label>
+
+            </div>
+
+            <div class="progress-container glass">
+                <div class="progress-header">
+                    <span>العبادات</span>
+                    <strong id="worshipProgressText">0%</strong>
+                </div>
+
+                <div class="progress">
+                    <div id="worshipProgress"></div>
+                </div>
+            </div>
+
+
+            <!-- Self evaluation -->
+            <div class="section-title">
+                <h2>📊 تقييم اليوم</h2>
+            </div>
+
+            <div class="form-card glass">
+
+                <label>
+                    الطب
+                    <input
+                        class="score-input"
+                        data-domain="medicine"
+                        type="range"
+                        min="1"
+                        max="10"
+                        value="5"
+                    >
+                    <output data-output="medicine">5</output>/10
+                </label>
+
+                <label>
+                    الصحة
+                    <input
+                        class="score-input"
+                        data-domain="health"
+                        type="range"
+                        min="1"
+                        max="10"
+                        value="5"
+                    >
+                    <output data-output="health">5</output>/10
+                </label>
+
+                <label>
+                    الإنجليزية
+                    <input
+                        class="score-input"
+                        data-domain="english"
+                        type="range"
+                        min="1"
+                        max="10"
+                        value="5"
+                    >
+                    <output data-output="english">5</output>/10
+                </label>
+
+                <label>
+                    الشركة
+                    <input
+                        class="score-input"
+                        data-domain="company"
+                        type="range"
+                        min="1"
+                        max="10"
+                        value="5"
+                    >
+                    <output data-output="company">5</output>/10
+                </label>
+
+                <label>
+                    الثروة
+                    <input
+                        class="score-input"
+                        data-domain="wealth"
+                        type="range"
+                        min="1"
+                        max="10"
+                        value="5"
+                    >
+                    <output data-output="wealth">5</output>/10
+                </label>
+
+                <label>
+                    العلاقات
+                    <input
+                        class="score-input"
+                        data-domain="relationships"
+                        type="range"
+                        min="1"
+                        max="10"
+                        value="5"
+                    >
+                    <output data-output="relationships">5</output>/10
+                </label>
+
+            </div>
+
+
+            <div class="form-card glass">
+
+                <label>
+                    أكبر إنجاز اليوم
+                    <textarea
+                        id="achievementInput"
+                        placeholder="ما أهم شيء أنجزته اليوم؟"
+                    ></textarea>
+                </label>
+
+                <label>
+                    أكبر عائق
+                    <textarea
+                        id="obstacleInput"
+                        placeholder="ما الشيء الذي عطلك؟"
+                    ></textarea>
+                </label>
+
+                <button
+                    id="saveEvaluationBtn"
+                    class="primary-btn"
+                >
+                    حفظ التقييم
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= STRATEGY ================= -->
+        <section class="page" id="page-strategy">
+
+            <div class="page-heading">
+                <p class="eyebrow">STRATEGIC ENGINE</p>
+                <h1>الهرم الاستراتيجي</h1>
+                <p class="muted">
+                    حوّل الرؤية إلى أنظمة ومهام قابلة للتنفيذ.
+                </p>
+            </div>
+
+
+            <div class="strategy-stack">
+
+                <div class="strategy-level glass">
+                    <span>01</span>
+                    <div>
+                        <small>VISION</small>
+                        <h3 id="visionText">
+                            بناء حياة مهنية ومالية وصحية متوازنة
+                        </h3>
+                    </div>
+                </div>
+
+                <div class="strategy-level glass">
+                    <span>02</span>
+                    <div>
+                        <small>YEARLY GOALS</small>
+                        <div id="yearGoals"></div>
+                    </div>
+                </div>
+
+                <div class="strategy-level glass">
+                    <span>03</span>
+                    <div>
+                        <small>QUARTERLY FOCUS</small>
+                        <div id="quarterGoals"></div>
+                    </div>
+                </div>
+
+                <div class="strategy-level glass">
+                    <span>04</span>
+                    <div>
+                        <small>WEEKLY SYSTEM</small>
+                        <div id="weeklyPlan"></div>
+                    </div>
+                </div>
+
+                <div class="strategy-level glass">
+                    <span>05</span>
+                    <div>
+                        <small>DAILY EXECUTION</small>
+                        <p class="muted">
+                            المهام اليومية هي أصغر وحدة لبناء المستقبل.
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div class="section-title">
+                <h2>المسارات</h2>
+            </div>
+
+            <div id="domainCards" class="domain-grid"></div>
+
+
+            <div class="section-title">
+                <h2>➕ إضافة هدف</h2>
+            </div>
+
+            <div class="form-card glass">
+
+                <label>
+                    الهدف
+                    <input
+                        id="goalTitle"
+                        placeholder="مثلاً: تحسين الإنجليزية الطبية"
+                    >
+                </label>
+
+                <label>
+                    المسار
+                    <select id="goalDomain">
+                        <option value="medicine">الطب</option>
+                        <option value="company">الشركة</option>
+                        <option value="health">الصحة</option>
+                        <option value="english">الإنجليزية</option>
+                        <option value="relationships">العلاقات</option>
+                        <option value="wealth">الثروة</option>
+                        <option value="worship">العبادات</option>
+                    </select>
+                </label>
+
+                <button
+                    id="addGoalBtn"
+                    class="primary-btn"
+                >
+                    إضافة الهدف
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= SETTINGS ================= -->
+        <section class="page" id="page-settings">
+
+            <div class="page-heading">
+                <p class="eyebrow">SYSTEM SETTINGS</p>
+                <h1>الإعدادات</h1>
+            </div>
+
+
+            <div class="settings-card glass">
+
+                <h3>🤖 Gemini AI</h3>
+
+                <p class="muted">
+                    المفتاح يتم تخزينه محلياً في هذا المتصفح فقط.
+                </p>
+
+                <label>
+                    Gemini API Key
+                    <input
+                        id="apiKeyInput"
+                        type="password"
+                        placeholder="AIza..."
+                        autocomplete="off"
+                    >
+                </label>
+
+                <div class="button-row">
+
+                    <button
+                        id="saveApiKeyBtn"
+                        class="primary-btn"
+                    >
+                        حفظ المفتاح
+                    </button>
+
+                    <button
+                        id="clearApiKeyBtn"
+                        class="danger-btn"
+                    >
+                        حذف
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div class="settings-card glass">
+
+                <h3>💾 البيانات</h3>
+
+                <button
+                    id="exportBtn"
+                    class="secondary-btn"
+                >
+                    تصدير بياناتي JSON
+                </button>
+
+                <label class="secondary-btn file-label">
+                    استيراد بيانات
+                    <input
+                        id="importInput"
+                        type="file"
+                        accept=".json"
+                        hidden
+                    >
+                </label>
+
+                <button
+                    id="resetBtn"
+                    class="danger-btn"
+                >
+                    حذف كل البيانات
+                </button>
+
+            </div>
+
+
+            <div class="settings-card glass">
+
+                <h3>⚠️ الخصوصية</h3>
+
+                <p class="muted">
+                    MedCEO OS نسخة Client-Side. بياناتك تحفظ في LocalStorage
+                    ولا يتم إرسالها إلى خادم خاص بالتطبيق.
+                </p>
+
+                <p class="warning">
+                    لا تستخدم API Key حقيقي عالي الصلاحيات في تطبيق GitHub
+                    Pages عام إذا كان الهدف منتجاً تجارياً متعدد المستخدمين.
+                </p>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- ================= BOTTOM NAV ================= -->
+    <nav class="bottom-nav">
+
+        <button data-page="dashboard" class="nav-item active">
+            <span>⌂</span>
+            الرئيسية
+        </button>
+
+        <button data-page="daily" class="nav-item">
+            <span>✓</span>
+            اليوم
+        </button>
+
+        <button data-page="strategy" class="nav-item">
+            <span>♟</span>
+            الاستراتيجية
+        </button>
+
+        <button data-page="settings" class="nav-item">
+            <span>⚙</span>
+            الإعدادات
+        </button>
+
+    </nav>
+
+</div>
+
+
+<!-- Task Modal -->
+<div id="taskModal" class="modal">
+
+    <div class="modal-box glass">
+
+        <div class="modal-header">
+            <h3>إضافة مهمة</h3>
+
             <button
-              class="task-check"
-              onclick="toggleTask(${task.id})"
+                id="closeTaskModal"
+                class="icon-btn"
             >
-              ✓
+                ×
             </button>
-
-            <div>
-              <div class="task-name">
-                ${escapeHTML(task.name)}
-              </div>
-
-              <small>
-                ${escapeHTML(task.domain)}
-              </small>
-            </div>
-
-            <small>
-              ${task.duration}m
-            </small>
-          </div>
-        `
-      )
-      .join("");
-}
-
-function toggleTask(id) {
-  const task =
-    data.tasks.find(x => x.id === id);
-
-  if (!task) return;
-
-  task.done = !task.done;
-
-  save();
-  renderTasks();
-  updateLifeScore();
-}
-
-function openTaskDialog() {
-  document
-    .getElementById("taskDialog")
-    .showModal();
-}
-
-function closeTaskDialog() {
-  document
-    .getElementById("taskDialog")
-    .close();
-}
-
-function addTask(event) {
-  event.preventDefault();
-
-  const name =
-    document
-      .getElementById("newTask")
-      .value
-      .trim();
-
-  if (!name) return;
-
-  data.tasks.push({
-    id: Date.now(),
-
-    name,
-
-    duration:
-      Number(
-        document
-          .getElementById("newDuration")
-          .value
-      ) || 30,
-
-    domain:
-      document
-        .getElementById("newTaskDomain")
-        .value,
-
-    done: false
-  });
-
-  save();
-
-  document
-    .getElementById("newTask")
-    .value = "";
-
-  closeTaskDialog();
-  renderTasks();
-}
-
-function renderDomains() {
-  const root =
-    document.getElementById("domainGrid");
-
-  root.innerHTML =
-    Object.values(data.domains)
-      .map(
-        d => `
-          <article class="domain">
-
-            <div class="domain-icon">
-              ${d.icon}
-            </div>
-
-            <div class="domain-head">
-              <h4>${d.name}</h4>
-              <strong>${d.score}%</strong>
-            </div>
-
-            <div class="progress">
-              <span
-                style="width:${d.score}%"
-              ></span>
-            </div>
-
-          </article>
-        `
-      )
-      .join("");
-}
-
-function updateLifeScore() {
-  const scores =
-    Object.values(data.domains)
-      .map(x => x.score);
-
-  const domainAverage =
-    scores.reduce((a,b) => a+b,0) /
-    scores.length;
-
-  const taskScore =
-    data.tasks.length
-      ? (
-          data.tasks.filter(x => x.done).length /
-          data.tasks.length
-        ) * 100
-      : 0;
-
-  const total =
-    Math.round(
-      domainAverage * .65 +
-      taskScore * .35
-    );
-
-  document.getElementById(
-    "lifeScore"
-  ).textContent = total;
-}
-
-function calculateReadiness() {
-  const sleep =
-    Number(
-      document.getElementById("sleep").value
-    ) || 0;
-
-  const energy =
-    Number(
-      document.getElementById("energy").value
-    ) || 0;
-
-  const shift =
-    Number(
-      document.getElementById("shift").value
-    ) || 0;
-
-  const sleepScore =
-    Math.min(sleep / 8, 1) * 100;
-
-  const energyScore =
-    Math.min(energy / 10, 1) * 100;
-
-  const shiftPenalty =
-    Math.min(shift / 24, 1) * 50;
-
-  const readiness =
-    Math.max(
-      10,
-      Math.round(
-        sleepScore * .45 +
-        energyScore * .55 -
-        shiftPenalty
-      )
-    );
-
-  document.getElementById(
-    "readinessValue"
-  ).textContent =
-    readiness + "%";
-
-  return readiness;
-}
-
-function emergencyMode() {
-  data.tasks =
-    data.tasks.map(task => {
-      if (
-        task.domain.includes("الإنجليزية")
-      ) {
-        return {
-          ...task,
-          duration: 10
-        };
-      }
-
-      if (
-        task.domain.includes("الشركة")
-      ) {
-        return {
-          ...task,
-          duration: 20
-        };
-      }
-
-      return task;
-    });
-
-  const hasRecovery =
-    data.tasks.some(
-      x => x.name.includes("تعاف")
-    );
-
-  if (!hasRecovery) {
-    data.tasks.push({
-      id: Date.now(),
-      name: "ماء + وجبة + تعافٍ بعد المناوبة",
-      duration: 10,
-      domain: "❤️ الصحة",
-      done: false
-    });
-  }
-
-  save();
-  renderTasks();
-
-  alert(
-    "تم تفعيل وضع المناوبة وخفض الحمل غير الضروري."
-  );
-
-  navigate("home");
-}
-
-function saveGoal() {
-  const text =
-    document
-      .getElementById("goalText")
-      .value
-      .trim();
-
-  if (!text) {
-    alert("اكتب الهدف أولاً.");
-    return;
-  }
-
-  data.goals.unshift({
-    id: Date.now(),
-
-    text,
-
-    level:
-      document
-        .getElementById("goalLevel")
-        .value,
-
-    domain:
-      document
-        .getElementById("goalDomain")
-        .value,
-
-    created:
-      new Date().toISOString()
-  });
-
-  save();
-
-  document
-    .getElementById("goalText")
-    .value = "";
-
-  renderGoals();
-}
-
-function renderGoals() {
-  const root =
-    document.getElementById("goalList");
-
-  if (!data.goals.length) {
-    root.innerHTML = "";
-    return;
-  }
-
-  root.innerHTML =
-    data.goals
-      .map(
-        goal => `
-          <article class="glass goal-card">
-
-            <span class="eyebrow gold">
-              ${escapeHTML(goal.level)}
-              ·
-              ${escapeHTML(goal.domain)}
-            </span>
-
-            <h3>
-              ${escapeHTML(goal.text)}
-            </h3>
-
-            <button
-              class="small-btn"
-              onclick="deleteGoal(${goal.id})"
+        </div>
+
+        <label>
+            اسم المهمة
+            <input
+                id="taskTitleInput"
+                placeholder="مثلاً: مراجعة ECG لمدة 30 دقيقة"
             >
-              حذف
-            </button>
-
-          </article>
-        `
-      )
-      .join("");
-}
-
-function deleteGoal(id) {
-  data.goals =
-    data.goals.filter(
-      x => x.id !== id
-    );
-
-  save();
-  renderGoals();
-}
-
-function renderSkills() {
-  const root =
-    document.getElementById("skillList");
-
-  root.innerHTML =
-    data.skills
-      .map(
-        skill => `
-          <div class="skill-row">
-
-            <article class="glass">
-
-              <div class="skill-top">
-                <h3>
-                  ${skill.icon}
-                  ${skill.name}
-                </h3>
-
-                <strong>
-                  ${skill.score}%
-                </strong>
-              </div>
-
-              <p>
-                ${skill.text}
-              </p>
-
-              <div class="progress">
-                <span
-                  style="width:${skill.score}%"
-                ></span>
-              </div>
-
-            </article>
-
-          </div>
-        `
-      )
-      .join("");
-}
-
-function getReviewValue(id) {
-  return Math.max(
-    0,
-    Math.min(
-      10,
-      Number(
-        document
-          .getElementById(id)
-          .value
-      ) || 0
-    )
-  );
-}
-
-function saveReview() {
-  const scores = {
-    medicine:
-      getReviewValue("rMedicine"),
-
-    health:
-      getReviewValue("rHealth"),
-
-    company:
-      getReviewValue("rCompany"),
-
-    english:
-      getReviewValue("rEnglish"),
-
-    wealth:
-      getReviewValue("rWealth"),
-
-    social:
-      getReviewValue("rSocial")
-  };
-
-  Object.keys(scores)
-    .forEach(key => {
-      const old =
-        data.domains[key].score;
-
-      const current =
-        scores[key] * 10;
-
-      data.domains[key].score =
-        Math.round(
-          old * .7 +
-          current * .3
-        );
-    });
-
-  const review = {
-    id: Date.now(),
-    date: new Date().toISOString(),
-
-    scores,
-
-    win:
-      document
-        .getElementById("todayWin")
-        .value
-        .trim(),
-
-    obstacle:
-      document
-        .getElementById("todayObstacle")
-        .value
-        .trim()
-  };
-
-  data.reviews.unshift(review);
-
-  save();
-
-  renderDomains();
-  renderLastReview();
-  updateLifeScore();
-  generateAdvice();
-
-  alert(
-    "تم حفظ التقييم وتحديث النظام."
-  );
-}
-
-function renderLastReview() {
-  const root =
-    document.getElementById("lastReview");
-
-  const review =
-    data.reviews[0];
-
-  if (!review) {
-    root.innerHTML =
-      `<p class="muted">
-        لا توجد مراجعة بعد.
-      </p>`;
-    return;
-  }
-
-  root.innerHTML = `
-    <p>
-      <b>الإنجاز:</b>
-      ${
-        escapeHTML(review.win) ||
-        "—"
-      }
-    </p>
-
-    <p>
-      <b>العائق:</b>
-      ${
-        escapeHTML(review.obstacle) ||
-        "—"
-      }
-    </p>
-
-    <p class="muted">
-      ${
-        new Date(
-          review.date
-        ).toLocaleString("ar")
-      }
-    </p>
-  `;
-}
-
-function generateAdvice() {
-  const domains =
-    Object.entries(data.domains);
-
-  const weakest =
-    domains.sort(
-      (a,b) =>
-        a[1].score -
-        b[1].score
-    )[0][1];
-
-  const unfinished =
-    data.tasks.filter(
-      x => !x.done
-    );
-
-  let text =
-    `المجال الأقل تقدماً الآن هو "${weakest.name}" ` +
-    `بدرجة ${weakest.score}%. `;
-
-  if (unfinished.length) {
-    text +=
-      `أكمل أولاً "${unfinished[0].name}"، ` +
-      `ثم خصص جلسة مركزة قصيرة لأعلى خطوة ` +
-      `قابلة للقياس في ${weakest.name}.`;
-  } else {
-    text +=
-      `أنجزت مهام اليوم. استخدم طاقتك المتبقية ` +
-      `لأصغر خطوة عالية الأثر في هذا المجال، ` +
-      `أو للتعافي إذا كانت جاهزيتك منخفضة.`;
-  }
-
-  document.getElementById(
-    "aiAdvice"
-  ).textContent = text;
-
-  return text;
-}
-
-function buildToday() {
-  const weakest =
-    Object.values(data.domains)
-      .sort(
-        (a,b) =>
-          a.score - b.score
-      )[0];
-
-  alert(
-    `اقتراح اليوم:\n\n` +
-    `1. حافظ على الهدف الطبي الأساسي.\n` +
-    `2. نفذ جلسة الإنجليزية.\n` +
-    `3. أعط أولوية إضافية لـ ${weakest.name}.`
-  );
-}
-
-function showDetail(type) {
-  const content = {
-    medicine: {
-      title: "🩺 الطب والجراحة",
-      text:
-        "المسار التخصصي، المهارات السريرية، الإجراءات، " +
-        "الامتحانات، البحث العلمي والتعليم الطبي المستمر."
-    },
-
-    company: {
-      title: "🏢 Company OS",
-      text:
-        "الاستراتيجية، المنتج، العملاء، الإيرادات، الفريق، " +
-        "العمليات ومؤشرات الأداء."
-    },
-
-    health: {
-      title: "❤️ Health OS",
-      text:
-        "النوم، القوة، الكارديو، التغذية، التعافي " +
-        "والاستمرارية خلال المناوبات."
-    },
-
-    wealth: {
-      title: "💰 Wealth OS",
-      text:
-        "الدخل، المصروفات، الأصول، الالتزامات، " +
-        "صافي الثروة والأهداف المالية."
-    },
-
-    english: {
-      title: "🗣️ English Year",
-      text:
-        "Speaking • Listening • Reading • Writing • " +
-        "Medical English. الهدف: تقدم قابل للقياس نحو C1."
-    }
-  };
-
-  const item =
-    content[type];
-
-  const card =
-    document.getElementById(
-      "detailCard"
-    );
-
-  card.classList.remove("hidden");
-
-  card.innerHTML = `
-    <span class="eyebrow gold">
-      MEDCEO MODULE
-    </span>
-
-    <h3>
-      ${item.title}
-    </h3>
-
-    <p style="
-      color:#9ca9bd;
-      line-height:1.9
-    ">
-      ${item.text}
-    </p>
-  `;
-
-  card.scrollIntoView({
-    behavior: "smooth"
-  });
-}
-
-function exportData() {
-  const blob =
-    new Blob(
-      [
-        JSON.stringify(
-          data,
-          null,
-          2
-        )
-      ],
-      {
-        type: "application/json"
-      }
-    );
-
-  const url =
-    URL.createObjectURL(blob);
-
-  const a =
-    document.createElement("a");
-
-  a.href = url;
-
-  a.download =
-    "medceo-backup-" +
-    new Date()
-      .toISOString()
-      .slice(0,10) +
-    ".json";
-
-  a.click();
-
-  URL.revokeObjectURL(url);
-}
-
-function resetApp() {
-  const ok =
-    confirm(
-      "سيتم حذف جميع بيانات MedCEO المخزنة على هذا الهاتف. متابعة؟"
-    );
-
-  if (!ok) return;
-
-  localStorage.removeItem(KEY);
-
-  location.reload();
-}
-
-function openSettings() {
-  navigate("more");
-}
-
-function escapeHTML(value = "") {
-  return String(value)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
-}
-
-init();
+        </label>
+
+        <label>
+            المسار
+            <select id="taskDomainInput">
+                <option value="medicine">الطب</option>
+                <option value="health">الصحة</option>
+                <option value="english">الإنجليزية</option>
+                <option value="company">الشركة</option>
+                <option value="wealth">الثروة</option>
+                <option value="relationships">العلاقات</option>
+                <option value="worship">العبادات</option>
+            </select>
+        </label>
+
+        <label>
+            المدة بالدقائق
+            <input
+                id="taskDurationInput"
+                type="number"
+                min="5"
+                value="30"
+            >
+        </label>
+
+        <button
+            id="saveTaskBtn"
+            class="primary-btn"
+        >
+            إنشاء المهمة
+        </button>
+
+    </div>
+</div>
+
+
+<script type="module" src="app.js"></script>
+
+</body>
+</html>
