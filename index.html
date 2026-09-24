@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover"
+  />
+
+  <meta name="theme-color" content="#070b14" />
+
+  <meta
+    name="description"
+    content="MedCEO - Personal Strategic Operating System"
+  />
+
+  <title>MedCEO</title>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  />
+
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+
+<body>
+
+<div class="ambient ambient-one"></div>
+<div class="ambient ambient-two"></div>
+
+<div class="app">
+
+  <!-- Header -->
+  <header class="topbar">
+
+    <div>
+      <span class="eyebrow">PERSONAL STRATEGIC OS</span>
+
+      <h1>
+        Med<span>CEO</span>
+      </h1>
+
+      <p id="todayDate" class="muted"></p>
+    </div>
+
+    <button
+      class="round-button"
+      onclick="openSettings()"
+      aria-label="الإعدادات"
+    >
+      ⚙
+    </button>
+
+  </header>
+
+
+  <!-- Pages -->
+  <main>
+
+    <!-- HOME -->
+    <section id="page-home" class="page active">
+
+      <article class="hero glass">
+
+        <div>
+          <span class="eyebrow gold">
+            NORTH STAR
+          </span>
+
+          <h2>
+            طبيب متميز • مسار جراحي وطوارئ • CEO •
+            ثروة • صحة ولياقة • لغات • حياة متوازنة
+          </h2>
+        </div>
+
+        <div class="score-ring">
+          <strong id="lifeScore">0</strong>
+          <small>اليوم</small>
+        </div>
+
+      </article>
+
+
+      <div class="section-title">
+        <div>
+          <span class="eyebrow">TODAY</span>
+          <h3>مهمة اليوم</h3>
+        </div>
+
+        <button class="small-btn" onclick="buildToday()">
+          ✦ خطط
+        </button>
+      </div>
+
+
+      <article class="glass mission-card">
+
+        <div id="taskList"></div>
+
+        <button
+          class="primary"
+          onclick="openTaskDialog()"
+        >
+          + مهمة جديدة
+        </button>
+
+      </article>
+
+
+      <div class="section-title">
+        <div>
+          <span class="eyebrow">SYSTEM STATUS</span>
+          <h3>محاور حياتك</h3>
+        </div>
+      </div>
+
+      <div id="domainGrid" class="domain-grid"></div>
+
+
+      <article class="glass ai-card">
+
+        <div class="ai-icon">✦</div>
+
+        <div>
+          <span class="eyebrow purple">
+            MEDCEO INTELLIGENCE
+          </span>
+
+          <h3>التقريب التالي</h3>
+
+          <p id="aiAdvice">
+            أكمل تقييمك اليومي ليحلل النظام وضعك ويقترح
+            الخطوة التالية.
+          </p>
+        </div>
+
+        <button
+          class="secondary"
+          onclick="generateAdvice()"
+        >
+          تحليل وضعي
+        </button>
+
+      </article>
+
+    </section>
+
+
+    <!-- TODAY -->
+    <section id="page-today" class="page">
+
+      <div class="page-heading">
+        <span class="eyebrow gold">EXECUTION</span>
+        <h2>⚡ يومي</h2>
+        <p>
+          ركّز على النتائج الأعلى أثرًا، لا على عدد المهام.
+        </p>
+      </div>
+
+
+      <article class="glass">
+
+        <h3>جاهزية اليوم</h3>
+
+        <div class="readiness">
+          <strong id="readinessValue">--</strong>
+
+          <div>
+            <span>النوم</span>
+            <input
+              id="sleep"
+              type="number"
+              inputmode="decimal"
+              placeholder="7.5"
+              min="0"
+              max="15"
+            />
+          </div>
+
+          <div>
+            <span>الطاقة /10</span>
+            <input
+              id="energy"
+              type="number"
+              inputmode="numeric"
+              placeholder="8"
+              min="1"
+              max="10"
+            />
+          </div>
+
+          <div>
+            <span>ساعات المناوبة</span>
+            <input
+              id="shift"
+              type="number"
+              inputmode="decimal"
+              placeholder="0"
+              min="0"
+              max="24"
+            />
+          </div>
+        </div>
+
+        <button
+          class="primary"
+          onclick="calculateReadiness()"
+        >
+          حساب الجاهزية
+        </button>
+
+      </article>
+
+
+      <article class="glass danger-card">
+
+        <span class="eyebrow red">
+          ON-CALL MODE
+        </span>
+
+        <h3>🚨 وضع المناوبة</h3>
+
+        <p>
+          يخفض الحمل تلقائيًا ويحافظ على الحد الأدنى
+          المستمر من أهدافك.
+        </p>
+
+        <button
+          class="danger-button"
+          onclick="emergencyMode()"
+        >
+          تفعيل وضع المناوبة
+        </button>
+
+      </article>
+
+    </section>
+
+
+    <!-- STRATEGY -->
+    <section id="page-strategy" class="page">
+
+      <div class="page-heading">
+        <span class="eyebrow gold">
+          SUCCESSIVE APPROXIMATION
+        </span>
+
+        <h2>🎯 الهرم الاستراتيجي</h2>
+
+        <p>
+          الرؤية ← السنة ← الشهر ← الأسبوع ← اليوم
+          ← التنفيذ ← القياس ← التعديل.
+        </p>
+      </div>
+
+
+      <article class="glass">
+
+        <div class="strategy-line">
+
+          <div class="strategy-node active-node">
+            <span></span>
+            <div>
+              <small>رؤية الحياة</small>
+              <strong>MedCEO</strong>
+            </div>
+          </div>
+
+          <div class="strategy-node">
+            <span></span>
+            <div>
+              <small>10 سنوات</small>
+              <strong>قمة المسار المهني والمالي</strong>
+            </div>
+          </div>
+
+          <div class="strategy-node">
+            <span></span>
+            <div>
+              <small>3 سنوات</small>
+              <strong>تقدم تخصصي + شركة نامية</strong>
+            </div>
+          </div>
+
+          <div class="strategy-node">
+            <span></span>
+            <div>
+              <small>هذه السنة</small>
+              <strong>بناء الأساس</strong>
+            </div>
+          </div>
+
+          <div class="strategy-node">
+            <span></span>
+            <div>
+              <small>هذا الشهر</small>
+              <strong id="monthTarget">
+                حدد هدفك
+              </strong>
+            </div>
+          </div>
+
+          <div class="strategy-node">
+            <span></span>
+            <div>
+              <small>هذا الأسبوع</small>
+              <strong>
+                تنفيذ أعلى الأنشطة أثرًا
+              </strong>
+            </div>
+          </div>
+
+          <div class="strategy-node">
+            <span></span>
+            <div>
+              <small>اليوم</small>
+              <strong>
+                Top 3
+              </strong>
+            </div>
+          </div>
+
+        </div>
+
+      </article>
+
+
+      <article class="glass">
+
+        <span class="eyebrow">NEW TARGET</span>
+        <h3>+ أضف تقريبًا جديدًا</h3>
+
+        <label>
+          المستوى
+          <select id="goalLevel">
+            <option>رؤية الحياة</option>
+            <option>10 سنوات</option>
+            <option>3 سنوات</option>
+            <option>سنوي</option>
+            <option>ربع سنوي</option>
+            <option>شهري</option>
+            <option>أسبوعي</option>
+            <option>يومي</option>
+          </select>
+        </label>
+
+        <label>
+          المجال
+          <select id="goalDomain">
+            <option>الطب والجراحة</option>
+            <option>الشركة</option>
+            <option>الصحة</option>
+            <option>الثروة</option>
+            <option>الإنجليزية</option>
+            <option>CEO Academy</option>
+            <option>العلاقات</option>
+          </select>
+        </label>
+
+        <label>
+          الهدف
+          <textarea
+            id="goalText"
+            placeholder="مثال: الوصول إلى مستوى C1..."
+          ></textarea>
+        </label>
+
+        <button
+          class="primary"
+          onclick="saveGoal()"
+        >
+          🎯 اعتماد الهدف
+        </button>
+
+      </article>
+
+
+      <div id="goalList"></div>
+
+    </section>
+
+
+    <!-- CEO -->
+    <section id="page-ceo" class="page">
+
+      <div class="page-heading">
+        <span class="eyebrow purple">
+          EXECUTIVE DEVELOPMENT
+        </span>
+
+        <h2>👔 CEO Academy</h2>
+
+        <p>
+          برنامجك الموازي لبناء عقلية ومهارات المدير التنفيذي.
+        </p>
+      </div>
+
+      <div id="skillList"></div>
+
+    </section>
+
+
+    <!-- REVIEW -->
+    <section id="page-review" class="page">
+
+      <div class="page-heading">
+        <span class="eyebrow gold">
+          FEEDBACK LOOP
+        </span>
+
+        <h2>📊 التقييم</h2>
+
+        <p>
+          القياس المنتظم هو ما يحول الرؤية إلى نظام قابل للتصحيح.
+        </p>
+      </div>
+
+
+      <article class="glass">
+
+        <h3>التقييم اليومي</h3>
+
+        <div class="review-grid">
+
+          <label>
+            الطب /10
+            <input id="rMedicine" type="number" min="0" max="10">
+          </label>
+
+          <label>
+            الصحة /10
+            <input id="rHealth" type="number" min="0" max="10">
+          </label>
+
+          <label>
+            الشركة /10
+            <input id="rCompany" type="number" min="0" max="10">
+          </label>
+
+          <label>
+            الإنجليزية /10
+            <input id="rEnglish" type="number" min="0" max="10">
+          </label>
+
+          <label>
+            الثروة /10
+            <input id="rWealth" type="number" min="0" max="10">
+          </label>
+
+          <label>
+            العلاقات /10
+            <input id="rSocial" type="number" min="0" max="10">
+          </label>
+
+        </div>
+
+        <label>
+          أهم إنجاز اليوم
+          <textarea id="todayWin"></textarea>
+        </label>
+
+        <label>
+          أكبر عائق
+          <textarea id="todayObstacle"></textarea>
+        </label>
+
+        <button
+          class="primary"
+          onclick="saveReview()"
+        >
+          حفظ وتحليل اليوم
+        </button>
+
+      </article>
+
+
+      <article class="glass">
+
+        <h3>آخر مراجعة</h3>
+
+        <div id="lastReview">
+          لا توجد مراجعة بعد.
+        </div>
+
+      </article>
+
+    </section>
+
+
+    <!-- MORE -->
+    <section id="page-more" class="page">
+
+      <div class="page-heading">
+        <span class="eyebrow">MEDCEO OS</span>
+        <h2>◈ النظام الكامل</h2>
+      </div>
+
+      <div class="menu-grid">
+
+        <button onclick="showDetail('medicine')">
+          <b>🩺</b>
+          <span>الطب والجراحة</span>
+        </button>
+
+        <button onclick="showDetail('company')">
+          <b>🏢</b>
+          <span>الشركة</span>
+        </button>
+
+        <button onclick="showDetail('health')">
+          <b>❤️</b>
+          <span>الصحة</span>
+        </button>
+
+        <button onclick="showDetail('wealth')">
+          <b>💰</b>
+          <span>الثروة</span>
+        </button>
+
+        <button onclick="showDetail('english')">
+          <b>🗣️</b>
+          <span>English</span>
+        </button>
+
+        <button onclick="navigate('ceo')">
+          <b>👔</b>
+          <span>CEO Academy</span>
+        </button>
+
+        <button onclick="exportData()">
+          <b>📤</b>
+          <span>نسخة احتياطية</span>
+        </button>
+
+        <button onclick="resetApp()">
+          <b>⚠️</b>
+          <span>إعادة الضبط</span>
+        </button>
+
+      </div>
+
+
+      <article id="detailCard" class="glass hidden"></article>
+
+    </section>
+
+  </main>
+
+
+  <!-- Bottom nav -->
+  <nav class="bottom-nav">
+
+    <button
+      data-page="home"
+      class="nav-active"
+      onclick="navigate('home')"
+    >
+      <b>⌂</b>
+      <span>القيادة</span>
+    </button>
+
+    <button
+      data-page="today"
+      onclick="navigate('today')"
+    >
+      <b>⚡</b>
+      <span>يومي</span>
+    </button>
+
+    <button
+      data-page="strategy"
+      onclick="navigate('strategy')"
+    >
+      <b>◎</b>
+      <span>الاستراتيجية</span>
+    </button>
+
+    <button
+      data-page="review"
+      onclick="navigate('review')"
+    >
+      <b>◫</b>
+      <span>التقييم</span>
+    </button>
+
+    <button
+      data-page="more"
+      onclick="navigate('more')"
+    >
+      <b>•••</b>
+      <span>المزيد</span>
+    </button>
+
+  </nav>
+
+</div>
+
+
+<!-- Task Dialog -->
+<dialog id="taskDialog">
+
+  <form
+    class="dialog-card"
+    onsubmit="addTask(event)"
+  >
+
+    <div class="dialog-header">
+      <h3>مهمة جديدة</h3>
+
+      <button
+        type="button"
+        onclick="closeTaskDialog()"
+      >
+        ✕
+      </button>
+    </div>
+
+    <label>
+      المهمة
+      <input
+        id="newTask"
+        required
+        placeholder="مثال: مراجعة فصل جراحي"
+      />
+    </label>
+
+    <label>
+      المدة بالدقائق
+      <input
+        id="newDuration"
+        type="number"
+        inputmode="numeric"
+        value="45"
+      />
+    </label>
+
+    <select id="newTaskDomain">
+      <option>🩺 الطب</option>
+      <option>🏢 الشركة</option>
+      <option>🗣️ الإنجليزية</option>
+      <option>❤️ الصحة</option>
+      <option>💰 الثروة</option>
+      <option>👔 CEO</option>
+    </select>
+
+    <button class="primary">
+      إضافة
+    </button>
+
+  </form>
+
+</dialog>
+
+
+<script src="./app.js"></script>
+
+</body>
+             </html>
