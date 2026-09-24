@@ -1127,4 +1127,559 @@ function closeTaskModal() {
 function saveModalTask() {
 
     const title =
-        document.getElemen
+        document.getElementById(
+            "taskTitleInput"
+        ).value;
+
+
+    const domain =
+        document.getElementById(
+            "taskDomainInput"
+        ).value;
+
+
+    const duration =
+        document.getElementById(
+            "taskDurationInput"
+        ).value;
+
+
+    if (!title.trim()) {
+
+        showToast(
+            "اكتب اسم المهمة."
+        );
+
+        return;
+    }
+
+
+    addTask(
+        title,
+        domain,
+        duration
+    );
+
+
+    document.getElementById(
+        "taskTitleInput"
+    ).value = "";
+
+
+    closeTaskModal();
+}
+
+
+/* =========================================================
+   Export
+========================================================= */
+
+function exportData() {
+
+    const data =
+        JSON.stringify(
+            state,
+            null,
+            2
+        );
+
+
+    const blob =
+        new Blob(
+            [data],
+            {
+                type:
+                    "application/json"
+            }
+        );
+
+
+    const url =
+        URL.createObjectURL(blob);
+
+
+    const link =
+        document.createElement("a");
+
+
+    link.href = url;
+
+    link.download =
+        `medceo-backup-${getDateKey()}.json`;
+
+
+    link.click();
+
+
+    URL.revokeObjectURL(url);
+}
+
+
+/* =========================================================
+   Import
+========================================================= */
+
+function importData(event) {
+
+    const file =
+        event.target.files[0];
+
+
+    if (!file) {
+        return;
+    }
+
+
+    const reader =
+        new FileReader();
+
+
+    reader.onload =
+        () => {
+
+            try {
+
+                const imported =
+                    JSON.parse(
+                        reader.result
+                    );
+
+
+                state =
+                    mergeDeep(
+                        structuredClone(
+                            defaultState
+                        ),
+                        imported
+                    );
+
+
+                saveState();
+
+                renderAll();
+
+                showToast(
+                    "تم استيراد البيانات ✓"
+                );
+
+            } catch {
+
+                showToast(
+                    "ملف غير صالح."
+                );
+            }
+        };
+
+
+    reader.readAsText(file);
+}
+
+
+/* =========================================================
+   Reset
+========================================================= */
+
+function resetApp() {
+
+    const confirmed =
+        confirm(
+            "هل تريد حذف جميع بيانات MedCEO OS؟"
+        );
+
+
+    if (!confirmed) {
+        return;
+    }
+
+
+    localStorage.removeItem(
+        STORAGE_KEY
+    );
+
+
+    state =
+        structuredClone(
+            defaultState
+        );
+
+
+    renderAll();
+
+    showToast(
+        "تم إعادة ضبط التطبيق."
+    );
+}
+
+
+/* =========================================================
+   Render
+========================================================= */
+
+function renderDashboard() {
+
+    const readiness =
+        calculateReadiness();
+
+
+    document.getElementById(
+        "readinessScore"
+    ).textContent =
+        readiness;
+
+
+    document.getElementById(
+        "sleepValue"
+    ).textContent =
+        state.daily.sleep;
+
+
+    document.getElementById(
+        "energyValue"
+    ).textContent =
+        state.daily.energy;
+
+
+    document.getElementById(
+        "shiftStatus"
+    ).textContent =
+        state.daily.onCall
+            ? `مناوبة ${state.daily.shiftHours}س`
+            : "لا توجد";
+
+
+    const progress =
+        calculateTaskCompletion();
+
+
+    document.getElementById(
+        "taskProgress"
+    ).style.width =
+        `${progress}%`;
+
+
+    document.getElementById(
+        "taskProgressText"
+    ).textContent =
+        `${progress}%`;
+
+
+    document.getElementById(
+        "aiReport"
+    ).textContent =
+        state.ai.lastReport ||
+        "لم يتم تحليل اليوم بعد.";
+}
+
+
+function renderAll() {
+
+    renderDashboard();
+
+    renderTasks();
+
+    renderWorship();
+
+    renderStrategy();
+
+    loadDailyInputs();
+
+    loadSettings();
+}
+
+
+/* =========================================================
+   Range Inputs
+========================================================= */
+
+function initRangeInputs() {
+
+    const energy =
+        document.getElementById(
+            "energyInput"
+        );
+
+
+    energy.addEventListener(
+        "input",
+        () => {
+
+            document.getElementById(
+                "energyOutput"
+            ).textContent =
+                energy.value;
+        }
+    );
+
+
+    document
+        .querySelectorAll(".score-input")
+        .forEach(input => {
+
+            input.addEventListener(
+                "input",
+                () => {
+
+                    document.querySelector(
+                        `[data-output="${input.dataset.domain}"]`
+                    ).textContent =
+                        input.value;
+                }
+            );
+        });
+}
+
+
+/* =========================================================
+   Worship Events
+========================================================= */
+
+function initWorship() {
+
+    document
+        .querySelectorAll("[data-worship]")
+        .forEach(input => {
+
+            input.addEventListener(
+                "change",
+                () => {
+
+                    state.daily.worship[
+                        input.dataset.worship
+                    ] =
+                        input.checked;
+
+
+                    saveState();
+
+                    renderWorship();
+
+                    renderDashboard();
+                }
+            );
+        });
+}
+
+
+/* =========================================================
+   Helpers
+========================================================= */
+
+function escapeHTML(value) {
+
+    return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
+
+
+function showToast(message) {
+
+    const toast =
+        document.createElement("div");
+
+
+    toast.textContent =
+        message;
+
+
+    Object.assign(
+        toast.style,
+        {
+            position: "fixed",
+            bottom: "100px",
+            left: "50%",
+            transform: "translateX(-50%)",
+            padding: "12px 18px",
+            background: "#171c2b",
+            border: "1px solid rgba(255,255,255,.1)",
+            borderRadius: "12px",
+            color: "#fff",
+            zIndex: "9999",
+            fontSize: "13px",
+            boxShadow: "0 10px 30px rgba(0,0,0,.3)"
+        }
+    );
+
+
+    document.body.appendChild(toast);
+
+
+    setTimeout(
+        () => toast.remove(),
+        2500
+    );
+}
+
+
+/* =========================================================
+   Event Listeners
+========================================================= */
+
+function initEvents() {
+
+    document.getElementById(
+        "saveDailyBtn"
+    ).addEventListener(
+        "click",
+        saveDailyData
+    );
+
+
+    document.getElementById(
+        "saveEvaluationBtn"
+    ).addEventListener(
+        "click",
+        saveEvaluation
+    );
+
+
+    document.getElementById(
+        "analyzeBtn"
+    ).addEventListener(
+        "click",
+        runAIAnalysis
+    );
+
+
+    document.getElementById(
+        "addTaskBtn"
+    ).addEventListener(
+        "click",
+        openTaskModal
+    );
+
+
+    document.getElementById(
+        "closeTaskModal"
+    ).addEventListener(
+        "click",
+        closeTaskModal
+    );
+
+
+    document.getElementById(
+        "saveTaskBtn"
+    ).addEventListener(
+        "click",
+        saveModalTask
+    );
+
+
+    document.getElementById(
+        "saveApiKeyBtn"
+    ).addEventListener(
+        "click",
+        saveApiKey
+    );
+
+
+    document.getElementById(
+        "clearApiKeyBtn"
+    ).addEventListener(
+        "click",
+        clearApiKey
+    );
+
+
+    document.getElementById(
+        "exportBtn"
+    ).addEventListener(
+        "click",
+        exportData
+    );
+
+
+    document.getElementById(
+        "importInput"
+    ).addEventListener(
+        "change",
+        importData
+    );
+
+
+    document.getElementById(
+        "resetBtn"
+    ).addEventListener(
+        "click",
+        resetApp
+    );
+
+
+    document.getElementById(
+        "addGoalBtn"
+    ).addEventListener(
+        "click",
+        () => {
+
+            const title =
+                document.getElementById(
+                    "goalTitle"
+                ).value.trim();
+
+
+            const domain =
+                document.getElementById(
+                    "goalDomain"
+                ).value;
+
+
+            if (!title) {
+
+                showToast(
+                    "اكتب الهدف أولاً."
+                );
+
+                return;
+            }
+
+
+            state.strategy.yearlyGoals.push(
+                `${domainLabel(domain)}: ${title}`
+            );
+
+
+            document.getElementById(
+                "goalTitle"
+            ).value = "";
+
+
+            saveState();
+
+            renderStrategy();
+
+            showToast(
+                "تمت إضافة الهدف ✓"
+            );
+        }
+    );
+}
+
+
+/* =========================================================
+   Initialization
+========================================================= */
+
+function init() {
+
+    document.getElementById(
+        "currentDate"
+    ).textContent =
+        formatDate();
+
+
+    initNavigation();
+
+    initRangeInputs();
+
+    initWorship();
+
+    initEvents();
+
+    renderAll();
+}
+
+
+init();
